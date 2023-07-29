@@ -6,23 +6,23 @@ std::shared_ptr<arrow::Array> create_array(char variant) {
     // float builder
     arrow::FloatBuilder floatbuilder;
     float values_b[3] = {1.1, 2.2, 3.3};
-    floatbuilder.AppendValues(values_b, 3);
+    (void)floatbuilder.AppendValues(values_b, 3);
     std::shared_ptr<arrow::Array> array_b = *(floatbuilder.Finish());
     return array_b;
   } else if(variant == 'c') {
     // string builder
     arrow::StringBuilder stringbuilder;
     const char* values_c[3] = {"abc", "def", "ghi"};
-    stringbuilder.AppendValues(values_c, 3);
+    (void)stringbuilder.AppendValues(values_c, 3);
     std::shared_ptr<arrow::Array> array_c = *(stringbuilder.Finish());
     return array_c;
   }
   // builders
   // int builder
-  arrow::Int32Builder int32builder;
+  arrow::Int32Builder intbuilder;
   int32_t values_a[3] = {1, 2, 3};
-  int32builder.AppendValues(values_a, 3);
-  std::shared_ptr<arrow::Array> array_a = *(int32builder.Finish());
+  (void)intbuilder.AppendValues(values_a, 3);
+  std::shared_ptr<arrow::Array> array_a = *(intbuilder.Finish());
   return array_a;
 }
 

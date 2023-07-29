@@ -1,7 +1,6 @@
 #pragma once
 #include <pybind11/pybind11.h>
 #include <arrow/python/pyarrow.h>
-#include <apn/apn.hpp>
 #include <apn-python/caster.hpp>
 #include <apn-python/common.hpp>
 

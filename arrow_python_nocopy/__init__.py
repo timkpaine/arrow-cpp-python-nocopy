@@ -25,7 +25,7 @@ def lib_path():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), "lib"))
 
 def _df():
-    return pd.DataFrame({"a": [1, 2, 3], "b": [1.1, 2.2, 3.3], "c": ["abc", "def", "ghi"]})
+    return pd.DataFrame({"a": pd.Series([1, 2, 3], dtype='Int32'), "b": pd.Series([1.1, 2.2, 3.3], dtype='Float32'), "c": pd.Series(["abc", "def", "ghi"], dtype=str)})
 
 def _table():
     return pa.Table.from_pandas(_df())

@@ -1,7 +1,6 @@
 #pragma once
 #include "Python.h"
 #include <arrow/python/pyarrow.h>
-#include <apn/apn.hpp>
 #include <apn-python/common.hpp>
 
 LIB_EXPORT PyObject* array_info_py_raw(PyObject*, PyObject*);

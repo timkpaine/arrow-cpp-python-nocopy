@@ -4,10 +4,10 @@
 
 #include <arrow/table.h>
 
-#include <apn/exports.h>
+#include <apn-common/exports.h>
 
 extern "C" {
-#include "apn/apn.h"
+#include "apn/bridge.h"
 }
 
 LIB_EXPORT std::shared_ptr<arrow::Array> create_array(char);

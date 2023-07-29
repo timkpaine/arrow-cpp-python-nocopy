@@ -1,6 +1,8 @@
 #pragma once
+#include <string>
+#include <arrow/table.h>
 #include <arrow/python/pyarrow.h>
-#include <apn/apn.hpp>
+#include <apn-common/exports.h>
 
 LIB_EXPORT std::string array_info_py(std::shared_ptr<arrow::Array> array);
 LIB_EXPORT std::shared_ptr<arrow::Array> create_array_py();

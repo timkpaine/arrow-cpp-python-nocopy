@@ -16,7 +16,7 @@ class TestPybind:
 
     def test_create_schema_in_python(self):
         schema = pa.Schema.from_pandas(_df())
-        assert schema_info(schema) == 'a: int64\nb: double\nc: string'
+        assert schema_info(schema) == 'a: int32\nb: float\nc: string'
 
     def test_create_array_in_cpp(self):
         array = create_array()
@@ -42,7 +42,7 @@ class TestCPython:
 
     def test_create_schema_in_python(self):
         schema = pa.Schema.from_pandas(_df())
-        assert schema_info_cp(schema) == 'a: int64\nb: double\nc: string'
+        assert schema_info_cp(schema) == 'a: int32\nb: float\nc: string'
 
     def test_create_schema_in_python_bad_value(self):
         with pytest.raises(TypeError):

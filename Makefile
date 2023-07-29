@@ -18,7 +18,7 @@ develop-cpp:
 	. vcpkg/bootstrap.sh
 	./vcpkg/vcpkg install
 
-develop: develop-py  ## Setup project for development
+develop: develop-cpp develop-py  ## Setup project for development
 
 .PHONY: build-py build-cpp build debug-py debug
 build-py:

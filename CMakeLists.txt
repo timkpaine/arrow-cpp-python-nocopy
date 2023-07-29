@@ -234,13 +234,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(
     PROJECT_HDRS
     "${PROJECT_SOURCE_DIR}/src/apn/apn.hpp"
-    "${PROJECT_SOURCE_DIR}/src/apn/exports.h"
-    "${PROJECT_SOURCE_DIR}/src/apn/apn.h"
+    "${PROJECT_SOURCE_DIR}/src/apn/bridge.h"
+    "${PROJECT_SOURCE_DIR}/src/apn-common/exports.h"
 )
 set(
     PROJECT_SRCS
     "${PROJECT_SOURCE_DIR}/src/apn/apn.cpp"
-    "${PROJECT_SOURCE_DIR}/src/apn/apn.c"
+    "${PROJECT_SOURCE_DIR}/src/apn/bridge.cpp"
 )
 
 add_library(arrow-python-nocopy SHARED ${PROJECT_SRCS})
