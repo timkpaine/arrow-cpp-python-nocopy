@@ -1,22 +1,28 @@
 import pandas as pd
 import pyarrow as pa
-from arrow_python_nocopy import schema_info, table_info, create_table
-
+from arrow_python_nocopy import array_info, create_array
+from arrow_python_nocopy import schema_info, create_schema
+# from arrow_python_nocopy import table_info, create_table
+from arrow_python_nocopy import _df, _table
 
 class TestAll:
-    def test_create_arrow_table_in_python(self):
-        df = pd.DataFrame({"a": [1, 2, 3], "b": [1.1, 2.2, 3.3], "c": ["abc", "def", "ghi"]})
-        arrow_table = pa.Table.from_pandas(df)
-        arrow_schema = pa.Schema.from_pandas(df)
-        assert schema_info(arrow_schema) == 'a: int64\nb: double\nc: string'
+    def test_create_array_in_python(self):
+        table = _table()
+        array = table.columns[0].chunk(0)
+        assert array_info(array) == '[\n  1,\n  2,\n  3\n]'
+
+    def test_create_schema_in_python(self):
+        schema = pa.Schema.from_pandas(_df())
+        assert schema_info(schema) == 'a: int64\nb: double\nc: string'
+
+    def test_create_array_in_cpp(self):
+        array = create_array()
         assert (
-            table_info(arrow_table)
-            == 'a: int64\nb: double\nc: string\n-- schema metadata --\npandas: \'{"index_columns": [{"kind": "range", "name": null, "start": 0, "\' + 563\n----\na:\n  [\n    [\n      1,\n      2,\n      3\n    ]\n  ]\nb:\n  [\n    [\n      1.1,\n      2.2,\n      3.3\n    ]\n  ]\nc:\n  [\n    [\n      "abc",\n      "def",\n      "ghi"\n    ]\n  ]\n'
+            str(array) == '[\n  1,\n  2,\n  3\n]'
         )
 
-    def test_create_arrow_table_in_cpp(self):
-        pa = create_table()
-        df = pa.to_pandas()
+    def test_create_schema_in_cpp(self):
+        schema = create_schema()
         assert (
-            df.to_json() == '{"a":{"0":1,"1":2,"2":3},"b":{"0":1.1000000238,"1":2.2000000477,"2":3.2999999523},"c":{"0":"abc","1":"def","2":"ghi"}}'
+            str(schema) == 'a: int32\nb: float\nc: binary'
         )

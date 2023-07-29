@@ -233,12 +233,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 #########################
 set(
     PROJECT_HDRS
-    "${PROJECT_SOURCE_DIR}/src/arrow-python-nocopy/arrow-python-nocopy.hpp"
-    "${PROJECT_SOURCE_DIR}/src/arrow-python-nocopy/exports.hpp"
+    "${PROJECT_SOURCE_DIR}/src/apn/apn.hpp"
+    "${PROJECT_SOURCE_DIR}/src/apn/exports.h"
+    "${PROJECT_SOURCE_DIR}/src/apn/apn.h"
 )
 set(
     PROJECT_SRCS
-    "${PROJECT_SOURCE_DIR}/src/arrow-python-nocopy/arrow-python-nocopy.cpp"
+    "${PROJECT_SOURCE_DIR}/src/apn/apn.cpp"
+    "${PROJECT_SOURCE_DIR}/src/apn/apn.c"
 )
 
 add_library(arrow-python-nocopy SHARED ${PROJECT_SRCS})
@@ -264,23 +266,30 @@ if(BUILD_PYTHON)
   find_package(pybind11 REQUIRED)
   include_directories(${pybind11_INCLUDE_DIR})
   include_directories("${PROJECT_SOURCE_DIR}/src/vendored/apache-arrow-12.0.1")
-  set(
-    PYTHON_HDRS
-    "${PROJECT_SOURCE_DIR}/src/arrow-python-nocopy/python/extension.hpp"
-  )
-  set(
-    PYTHON_SRCS
-    "${PROJECT_SOURCE_DIR}/src/arrow-python-nocopy/python/extension.cpp"
-  )
 
-  # Extension
-  pybind11_add_module(extension MODULE "${PYTHON_SRCS}")
-  set_target_properties(extension PROPERTIES PUBLIC_HEADER "${PYTHON_HDRS}")
+  # common functionality
+  add_library(common SHARED "${PROJECT_SOURCE_DIR}/src/apn-python/common.cpp")
+  set_target_properties(common PROPERTIES PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/src/apn-python/common.hpp")
 
-  # Link to standalone library
-  target_link_libraries(extension PUBLIC arrow-python-nocopy)
-  set_property(TARGET extension PROPERTY INSTALL_RPATH "${module_origin_path}/lib")
+  # pybind11 extension
+  pybind11_add_module(pybind11extension MODULE "${PROJECT_SOURCE_DIR}/src/apn-python/pybind11.cpp")
+  set_target_properties(pybind11extension PROPERTIES PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/src/apn-python/pybind11.hpp")
+
+  # cpython extension
+  add_library(cpythonextension SHARED "${PROJECT_SOURCE_DIR}/src/apn-python/cpython.cpp")
+  set_target_properties(cpythonextension PROPERTIES PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/src/apn-python/cpython.hpp")
+
+  # Link to standalone/common library
+  target_link_libraries(common PUBLIC arrow-python-nocopy)
+  target_link_libraries(pybind11extension PUBLIC common)
+  target_link_libraries(cpythonextension PUBLIC common)
+  set_property(TARGET common PROPERTY INSTALL_RPATH "${module_origin_path}/lib")
+  set_property(TARGET pybind11extension PROPERTY INSTALL_RPATH "${module_origin_path}/lib")
+  set_property(TARGET cpythonextension PROPERTY INSTALL_RPATH "${module_origin_path}/lib")
+  set_property(TARGET cpythonextension PROPERTY PREFIX "")
 
   # install in python module
-  install(TARGETS extension EXPORT ArrowPythonNocopy LIBRARY DESTINATION . PUBLIC_HEADER DESTINATION include/python)
+  install(TARGETS common EXPORT ArrowPythonNocopy LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include/python)
+  install(TARGETS pybind11extension EXPORT ArrowPythonNocopy LIBRARY DESTINATION . PUBLIC_HEADER DESTINATION include/python)
+  install(TARGETS cpythonextension EXPORT ArrowPythonNocopy LIBRARY DESTINATION . PUBLIC_HEADER DESTINATION include/python)
 endif()

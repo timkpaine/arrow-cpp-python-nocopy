@@ -33,7 +33,7 @@ build: build-py  ## Build the project
 
 .PHONY: lint-py lint-cpp lint
 lint-py:
-	python -m ruff arrow-python-nocopy
+	python -m ruff arrow_python_nocopy
 
 lint-cpp:
 	clang-format --dry-run -Werror -i -style=file `find ./src -name "*.*pp"`
@@ -42,7 +42,7 @@ lint: lint-cpp lint-py  ## Run project linters
 
 .PHONY: fix-py fix-cpp fix
 fix-py:
-	python -m ruff arrow-python-nocopy --fix
+	python -m ruff arrow_python_nocopy --fix
 
 fix-cpp:
 	clang-format -i -style=file `find ./src -name "*.*pp"`
@@ -51,7 +51,7 @@ fix: fix-cpp fix-py  ## Run project autofixers
 
 .PHONY: tests-py tests-cpp tests test tests-ci
 tests-py:
-	python -m pytest -v arrow-python-nocopy/tests --junitxml=junit.xml --cov=arrow-python-nocopy --cov-branch --cov-fail-under=65 --cov-report term-missing --cov-report xml
+	python -m pytest -v arrow_python_nocopy/tests --junitxml=junit.xml --cov=arrow_python_nocopy --cov-branch --cov-fail-under=65 --cov-report term-missing --cov-report xml
 
 tests-cpp:
 	echo "TODO C++ tests"
