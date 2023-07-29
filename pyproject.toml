@@ -43,6 +43,8 @@ develop = [
     "check-manifest",
     "cibuildwheel",
     "numpy",
+    "pandas",
+    "pyarrow",
     "pybind11[global]",
     "pytest",
     "pytest-cov",
