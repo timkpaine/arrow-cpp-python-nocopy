@@ -17,6 +17,9 @@ if os.path.exists(vcpkg_config_file):
         f"-DCMAKE_TOOLCHAIN_FILE={vcpkg_config_file}"
     )
 
+if "DEBUG" in os.environ:
+    cmake_args.append("-DCMAKE_BUILD_TYPE=Debug")
+
 if "STATIC_PYTHON" in os.environ:
     cmake_args.append("-DSTATIC_PYTHON=On")
 

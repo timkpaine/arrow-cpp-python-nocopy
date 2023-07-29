@@ -5,6 +5,9 @@ import pandas as pd
 from .pybind11extension import array_info, create_array
 from .pybind11extension import schema_info, create_schema
 # from .pybind11extension import table_info, create_table
+from .cpythonextension import array_info as array_info_cp, create_array as create_array_cp
+from .cpythonextension import schema_info as schema_info_cp, create_schema as create_schema_cp
+# from .pybind11extension import table_info as table_info_cp, create_table as create_table_cp
 
 
 __version__ = "0.1.0"

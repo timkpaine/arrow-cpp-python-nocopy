@@ -9,7 +9,7 @@ namespace py = pybind11;
 
 PYBIND11_MODULE(pybind11extension, m) {
   arrow::py::import_pyarrow();
-  m.doc() = "";
+  m.doc() = "pybind11";
   m.def("array_info", &array_info_py);
   m.def("create_array", &create_array_py);
   m.def("schema_info", &schema_info_py);

@@ -1,16 +1,15 @@
 #include <arrow/builder.h>
 #include "apn/apn.hpp"
 
-
 std::shared_ptr<arrow::Array> create_array(char variant) {
-  if (variant == 'b') {
+  if(variant == 'b') {
     // float builder
     arrow::FloatBuilder floatbuilder;
     float values_b[3] = {1.1, 2.2, 3.3};
     floatbuilder.AppendValues(values_b, 3);
     std::shared_ptr<arrow::Array> array_b = *(floatbuilder.Finish());
     return array_b;
-  } else if (variant == 'c') {
+  } else if(variant == 'c') {
     // string builder
     arrow::StringBuilder stringbuilder;
     const char* values_c[3] = {"abc", "def", "ghi"};
@@ -41,11 +40,11 @@ std::shared_ptr<arrow::Schema> create_schema() {
 }
 
 std::string schema_info(std::shared_ptr<arrow::Schema> s) {
-    return s->ToString();
+  return s->ToString();
 }
 
 std::string table_info(std::shared_ptr<arrow::Table> t) {
-    return t->ToString();
+  return t->ToString();
 }
 
 std::shared_ptr<arrow::Table> create_table() {
@@ -57,15 +56,15 @@ std::shared_ptr<arrow::Table> create_table() {
   std::shared_ptr<arrow::Schema> schema = create_schema();
 
   // record batch for ref
-//   std::shared_ptr<arrow::RecordBatch> rbatch = arrow::RecordBatch::Make(schema, 3, {array_a, array_b, array_c});
+  //   std::shared_ptr<arrow::RecordBatch> rbatch = arrow::RecordBatch::Make(schema, 3, {array_a, array_b, array_c});
 
   // chunked arrays, for ref
   arrow::ArrayVector vecs_a{array_a};
   arrow::ArrayVector vecs_b{array_b};
   arrow::ArrayVector vecs_c{array_c};
-  std::shared_ptr<arrow::ChunkedArray> chunks_a =std::make_shared<arrow::ChunkedArray>(vecs_a);
-  std::shared_ptr<arrow::ChunkedArray> chunks_b =std::make_shared<arrow::ChunkedArray>(vecs_b);
-  std::shared_ptr<arrow::ChunkedArray> chunks_c =std::make_shared<arrow::ChunkedArray>(vecs_c);
-  std::shared_ptr<arrow::Table> table = arrow::Table::Make(schema, {chunks_a, chunks_b, chunks_c}, 3);
+  std::shared_ptr<arrow::ChunkedArray> chunks_a = std::make_shared<arrow::ChunkedArray>(vecs_a);
+  std::shared_ptr<arrow::ChunkedArray> chunks_b = std::make_shared<arrow::ChunkedArray>(vecs_b);
+  std::shared_ptr<arrow::ChunkedArray> chunks_c = std::make_shared<arrow::ChunkedArray>(vecs_c);
+  std::shared_ptr<arrow::Table> table           = arrow::Table::Make(schema, {chunks_a, chunks_b, chunks_c}, 3);
   return table;
 }

@@ -56,7 +56,7 @@ include_directories ("${CMAKE_SOURCE_DIR}/src")
 find_package (Color)
 
 if (NOT DEFINED CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Release/Debug build")
+  set(CMAKE_BUILD_TYPE "Debugma" CACHE STRING "Release/Debug build")
 endif()
 if (NOT DEFINED PYTHON_VERSION)
   set(PYTHON_VERSION "3.9" CACHE STRING "Python version to build against")

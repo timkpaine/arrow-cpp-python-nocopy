@@ -20,9 +20,12 @@ develop-cpp:
 
 develop: develop-py  ## Setup project for development
 
-.PHONY: build-py build-cpp build
+.PHONY: build-py build-cpp build debug-py debug
 build-py:
 	python setup.py build build_ext --inplace
+
+debug-py:
+	DEBUG=1 python setup.py build build_ext --inplace
 
 build-cpp:
 	cmake -B build . -DBUILD_PYTHON=Off
@@ -30,6 +33,9 @@ build-cpp:
 
 # build: build-cpp build-py  ## Build the project
 build: build-py  ## Build the project
+
+debug: debug-py  ## Debug build the project
+
 
 .PHONY: lint-py lint-cpp lint
 lint-py:
