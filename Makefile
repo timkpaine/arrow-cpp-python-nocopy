@@ -15,7 +15,7 @@ develop-py:
 	pip install `python -c 'import toml; c = toml.load("pyproject.toml"); print(" ".join(c["project"]["optional-dependencies"]["develop"]))'`
 
 develop-cpp:
-	. vcpkg/bootstrap-vcpkg.sh
+	./vcpkg/bootstrap-vcpkg.sh
 	./vcpkg/vcpkg install
 
 develop: develop-cpp develop-py  ## Setup project for development
