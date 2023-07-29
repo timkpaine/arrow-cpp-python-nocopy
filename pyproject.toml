@@ -31,7 +31,10 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
 ]
 keywords = []
-dependencies = []
+dependencies = [
+    "pandas",
+    "pyarrow",
+]
 
 [project.optional-dependencies]
 develop = [
