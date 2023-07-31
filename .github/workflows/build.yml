@@ -104,9 +104,13 @@ jobs:
         uses: actions-ext/cpp/setup@v1
 
       - name: Install dependencies
-        run: make develop-cpp
-        if: ${{ matrix.os != 'ubuntu-22.04' }}
+        run: make develop-macos
+        if: ${{ matrix.os == 'macos-12' }}
 
+      - name: Install dependencies
+        run: make develop-cpp
+        if: ${{ matrix.os == 'macos-12' }}
+    
       - name: Install dependencies
         run: make develop-arrow-ubuntu
         if: ${{ matrix.os == 'ubuntu-22.04' }}
