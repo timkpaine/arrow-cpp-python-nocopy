@@ -13,8 +13,7 @@ OTHER_ARGS :=
 develop-py:
 	pip install -U toml
 	pip install `python -c 'import toml; c = toml.load("pyproject.toml"); print(" ".join(c["project"]["optional-dependencies"]["develop"]))'`
-	ls /opt/hostedtoolcache/Python/3.9.17/x64/lib/python3.9/site-packages/numpy/core/include
-	ls /opt/hostedtoolcache/Python/3.9.17/x64/lib/python3.9/site-packages/numpy/core/include/numpy
+
 develop-cpp:
 	./vcpkg/bootstrap-vcpkg.sh
 	./vcpkg/vcpkg install
