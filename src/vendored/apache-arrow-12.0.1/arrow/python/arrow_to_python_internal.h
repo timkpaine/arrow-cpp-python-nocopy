@@ -17,26 +17,33 @@
 
 #pragma once
 
-#include <functional>
-#include <memory>
-#include <string>
-#include <vector>
-
-#include "arrow/csv/options.h"
-#include "arrow/python/common.h"
-#include "arrow/util/macros.h"
+#include "arrow/array.h"
+#include "arrow/python/platform.h"
 
 namespace arrow {
 namespace py {
-namespace csv {
+namespace internal {
+// TODO(ARROW-12976):  See if we can refactor Pandas ObjectWriter logic
+// to the .cc file and move this there as well if we can.
 
-using PyInvalidRowCallback = std::function<::arrow::csv::InvalidRowResult(
-    PyObject*, const ::arrow::csv::InvalidRow&)>;
+// Converts array to a sequency of python objects.
+template <typename ArrayType, typename WriteValue, typename Assigner>
+inline Status WriteArrayObjects(const ArrayType& arr, WriteValue&& write_func,
+                                Assigner out_values) {
+  // TODO(ARROW-12976): Use visitor here?
+  const bool has_nulls = arr.null_count() > 0;
+  for (int64_t i = 0; i < arr.length(); ++i) {
+    if (has_nulls && arr.IsNull(i)) {
+      Py_INCREF(Py_None);
+      *out_values = Py_None;
+    } else {
+      RETURN_NOT_OK(write_func(arr.GetView(i), out_values));
+    }
+    ++out_values;
+  }
+  return Status::OK();
+}
 
-ARROW_PYTHON_EXPORT
-::arrow::csv::InvalidRowHandler MakeInvalidRowHandler(PyInvalidRowCallback,
-                                                      PyObject* handler);
-
-}  // namespace csv
+}  // namespace internal
 }  // namespace py
 }  // namespace arrow

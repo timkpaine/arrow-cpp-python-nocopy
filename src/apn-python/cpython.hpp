@@ -5,7 +5,6 @@
 
 LIB_EXPORT PyObject* array_info_py_raw(PyObject*, PyObject*);
 LIB_EXPORT PyObject* create_array_py_raw(PyObject*, PyObject*);
-
 LIB_EXPORT PyObject* schema_info_py_raw(PyObject*, PyObject*);
 LIB_EXPORT PyObject* create_schema_py_raw(PyObject*, PyObject*);
 
@@ -24,6 +23,7 @@ static PyModuleDef cpythonextension_module = {
   PyModuleDef_HEAD_INIT, "cpythonextension", "cpython", -1, cpythonextension_methods};
 
 PyMODINIT_FUNC PyInit_cpythonextension(void) {
+  arrow::py::import_pyarrow();
   Py_Initialize();
   return PyModule_Create(&cpythonextension_module);
 }

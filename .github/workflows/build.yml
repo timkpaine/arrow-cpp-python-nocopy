@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - tkp/linux 
     tags:
       - v*
     paths-ignore:
@@ -81,6 +82,7 @@ jobs:
       matrix:
         os:
           - ubuntu-22.04
+          - macos-12
         python-version:
           - '3.9'
       fail-fast: false
@@ -102,7 +104,15 @@ jobs:
         uses: actions-ext/cpp/setup@v1
 
       - name: Install dependencies
-        run: make develop
+        run: make develop-cpp
+        if: ${{ matrix.os != 'ubuntu-22.04' }}
+
+      - name: Install dependencies
+        run: make develop-arrow-ubuntu
+        if: ${{ matrix.os == 'ubuntu-22.04' }}
+
+      - name: Install dependencies
+        run: make develop-py
 
       - name: Build project
         run: make build

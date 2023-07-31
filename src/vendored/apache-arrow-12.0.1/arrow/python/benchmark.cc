@@ -15,28 +15,24 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#pragma once
-
-#include <functional>
-#include <memory>
-#include <string>
-#include <vector>
-
-#include "arrow/csv/options.h"
-#include "arrow/python/common.h"
-#include "arrow/util/macros.h"
+#include "arrow/python/benchmark.h"
+#include "arrow/python/helpers.h"
 
 namespace arrow {
 namespace py {
-namespace csv {
+namespace benchmark {
 
-using PyInvalidRowCallback = std::function<::arrow::csv::InvalidRowResult(
-    PyObject*, const ::arrow::csv::InvalidRow&)>;
+void Benchmark_PandasObjectIsNull(PyObject* list) {
+  if (!PyList_CheckExact(list)) {
+    PyErr_SetString(PyExc_TypeError, "expected a list");
+    return;
+  }
+  Py_ssize_t i, n = PyList_GET_SIZE(list);
+  for (i = 0; i < n; i++) {
+    internal::PandasObjectIsNull(PyList_GET_ITEM(list, i));
+  }
+}
 
-ARROW_PYTHON_EXPORT
-::arrow::csv::InvalidRowHandler MakeInvalidRowHandler(PyInvalidRowCallback,
-                                                      PyObject* handler);
-
-}  // namespace csv
+}  // namespace benchmark
 }  // namespace py
 }  // namespace arrow

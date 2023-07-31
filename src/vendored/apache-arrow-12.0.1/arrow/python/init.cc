@@ -15,28 +15,10 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#pragma once
+// Trigger the array import (inversion of NO_IMPORT_ARRAY)
+#define NUMPY_IMPORT_ARRAY
 
-#include <functional>
-#include <memory>
-#include <string>
-#include <vector>
+#include "arrow/python/init.h"
+#include "arrow/python/numpy_interop.h"
 
-#include "arrow/csv/options.h"
-#include "arrow/python/common.h"
-#include "arrow/util/macros.h"
-
-namespace arrow {
-namespace py {
-namespace csv {
-
-using PyInvalidRowCallback = std::function<::arrow::csv::InvalidRowResult(
-    PyObject*, const ::arrow::csv::InvalidRow&)>;
-
-ARROW_PYTHON_EXPORT
-::arrow::csv::InvalidRowHandler MakeInvalidRowHandler(PyInvalidRowCallback,
-                                                      PyObject* handler);
-
-}  // namespace csv
-}  // namespace py
-}  // namespace arrow
+int arrow_init_numpy() { return arrow::py::import_numpy(); }

@@ -8,7 +8,6 @@ namespace detail {
     PYBIND11_TYPE_CASTER(std::shared_ptr<arrow::Array>, const_name("pyarrow::Array"));
     /* Python->C++ */
     bool load(handle src, bool) {
-      arrow::py::import_pyarrow();
       PyObject* source = src.ptr();
       if(!arrow::py::is_array(source))
         return false;
@@ -21,7 +20,6 @@ namespace detail {
 
     /* C++ -> Python) */
     static handle cast(std::shared_ptr<arrow::Array> src, return_value_policy /* policy */, handle /* parent */) {
-      arrow::py::import_pyarrow();
       return arrow::py::wrap_array(src);
     }
   };
@@ -32,7 +30,6 @@ namespace detail {
     PYBIND11_TYPE_CASTER(std::shared_ptr<arrow::Schema>, const_name("pyarrow::Schema"));
     /* Python->C++ */
     bool load(handle src, bool) {
-      arrow::py::import_pyarrow();
       PyObject* source = src.ptr();
       if(!arrow::py::is_schema(source))
         return false;
@@ -45,7 +42,6 @@ namespace detail {
 
     /* C++ -> Python) */
     static handle cast(std::shared_ptr<arrow::Schema> src, return_value_policy /* policy */, handle /* parent */) {
-      arrow::py::import_pyarrow();
       return arrow::py::wrap_schema(src);
     }
   };
@@ -56,7 +52,6 @@ namespace detail {
     PYBIND11_TYPE_CASTER(std::shared_ptr<arrow::Table>, const_name("pyarrow::Table"));
     /* Python->C++ */
     bool load(handle src, bool) {
-      arrow::py::import_pyarrow();
       PyObject* source = src.ptr();
       if(!arrow::py::is_table(source))
         return false;
@@ -69,7 +64,6 @@ namespace detail {
 
     /* C++ -> Python) */
     static handle cast(std::shared_ptr<arrow::Table> src, return_value_policy /* policy */, handle /* parent */) {
-      arrow::py::import_pyarrow();
       return arrow::py::wrap_table(src);
     }
   };

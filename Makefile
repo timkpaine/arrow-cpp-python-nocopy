@@ -13,10 +13,18 @@ OTHER_ARGS :=
 develop-py:
 	pip install -U toml
 	pip install `python -c 'import toml; c = toml.load("pyproject.toml"); print(" ".join(c["project"]["optional-dependencies"]["develop"]))'`
-
+	ls /opt/hostedtoolcache/Python/3.9.17/x64/lib/python3.9/site-packages/numpy/core/include
+	ls /opt/hostedtoolcache/Python/3.9.17/x64/lib/python3.9/site-packages/numpy/core/include/numpy
 develop-cpp:
 	./vcpkg/bootstrap-vcpkg.sh
 	./vcpkg/vcpkg install
+
+develop-arrow-ubuntu:
+	wget https://apache.jfrog.io/artifactory/arrow/$(shell lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(shell lsb_release --codename --short).deb
+	sudo apt install -y -V ./apache-arrow-apt-source-latest-$(shell lsb_release --codename --short).deb
+	sudo apt update
+	sudo apt install -y -V libarrow-dev # For C++
+	sudo apt install -y -V libarrow-glib-dev # For GLib (C)
 
 develop: develop-cpp develop-py  ## Setup project for development
 

@@ -1,20 +1,19 @@
+#include <arrow/python/pyarrow.h>
 #include <arrow/c/bridge.h>
 #include <apn-python/common.hpp>
 #include <apn/bridge.h>
 
-std::string array_info_py(std::shared_ptr<arrow::Array> array) {
+char* array_info_py(std::shared_ptr<arrow::Array> array) {
   // ABI unstable!
   // return array_info(array);
-  char buffer[100];
+  char* buffer = new char[100];
   struct ArrowArray c_array;
   (void)ExportArray(*array, &c_array);
   array_info_cabi(&c_array, buffer, 100);
-  return std::string(buffer);
+  return buffer;
 }
 
 std::shared_ptr<arrow::Array> create_array_py() {
-  arrow::py::import_pyarrow();
-
   // ABI unstable!
   // std::shared_ptr<arrow::Array> arrow_array = create_array_cabi();
   struct ArrowArray c_array;
@@ -23,19 +22,17 @@ std::shared_ptr<arrow::Array> create_array_py() {
   return arrow_array;
 }
 
-std::string schema_info_py(std::shared_ptr<arrow::Schema> schema) {
+char* schema_info_py(std::shared_ptr<arrow::Schema> schema) {
   // ABI unstable!
   // return schema_info(schema);
-  char buffer[100];
+  char* buffer = new char[100];
   struct ArrowSchema c_schema;
   (void)arrow::ExportSchema(*schema, &c_schema);
   schema_info_cabi(&c_schema, buffer, 100);
-  return std::string(buffer);
+  return buffer;
 }
 
 std::shared_ptr<arrow::Schema> create_schema_py() {
-  arrow::py::import_pyarrow();
-
   // ABI unstable!
   // std::shared_ptr<arrow::Schema> arrow_schema = create_schema();
 
@@ -50,7 +47,6 @@ std::shared_ptr<arrow::Schema> create_schema_py() {
 // }
 
 // std::shared_ptr<arrow::Table> create_table_py() {
-//     arrow::py::import_pyarrow();
 //     std::shared_ptr<arrow::Table> arrow_table = create_table();
 //     return arrow_table;
 //     // PyObject* obj = arrow::py::wrap_table(arrow_table);
