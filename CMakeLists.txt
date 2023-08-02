@@ -176,6 +176,7 @@ message("${Red}${CMAKE_MODULE_PATH}${ColorReset}")
 
 # broken on mac
 find_package(Arrow REQUIRED)
+include_directories(${Arrow_INCLUDE_DIR})
 
 ###############################################################################################################
 # Python #
