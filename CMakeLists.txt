@@ -45,10 +45,10 @@ endif()
 # Paths #
 #########
 # Custom CMake modules
-list(PREPEND CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_SOURCE_DIR}/cmake/modules")
+list(PREPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 
 # Base includes
-include_directories ("${CMAKE_SOURCE_DIR}/src")
+include_directories ("${PROJECT_SOURCE_DIR}/src")
 
 ###############################################################################################################
 # Build Configuration #
@@ -65,6 +65,7 @@ option(BUILD_PYTHON "Build Python bindings" ON)
 option(USE_CCACHE "Use CCache for build" OFF)
 option(STATIC_PYTHON "Build against static python (no libraries)" OFF)
 option(PYODIDE "Build against pyodide" OFF)
+set(BUILD_SHARED_LIBS ON)
 
 # CCache setup
 if(USE_CCACHE)
@@ -170,6 +171,10 @@ endif()
 ###############################################################################################################
 # Dependencies #
 ################
+message("${Red}${CMAKE_MODULE_PATH}${ColorReset}")
+
+
+# broken on mac
 find_package(Arrow REQUIRED)
 
 ###############################################################################################################
@@ -229,7 +234,7 @@ set(
 )
 
 add_library(arrow-python-nocopy SHARED ${PROJECT_SRCS})
-target_link_libraries(arrow-python-nocopy PRIVATE Arrow::arrow_shared)
+target_link_libraries(arrow-python-nocopy PRIVATE ${Arrow_LIBRARY})
 set_target_properties(arrow-python-nocopy PROPERTIES PUBLIC_HEADER "${PROJECT_HDRS}")
 
 # export symbols
@@ -300,13 +305,13 @@ if(BUILD_PYTHON)
   target_link_libraries(common PRIVATE arrow-python-nocopy)
   target_link_libraries(pybind11extension PRIVATE common)
   target_link_libraries(cpythonextension PRIVATE common)
-  set_property(TARGET common PROPERTY INSTALL_RPATH "${module_origin_path}:${module_origin_path}/lib")
-  set_property(TARGET pybind11extension PROPERTY INSTALL_RPATH "${module_origin_path}:${module_origin_path}/lib")
-  set_property(TARGET cpythonextension PROPERTY INSTALL_RPATH "${module_origin_path}:${module_origin_path}/lib")
+  set_property(TARGET common PROPERTY INSTALL_RPATH "${module_origin_path}")
+  set_property(TARGET pybind11extension PROPERTY INSTALL_RPATH "${module_origin_path}")
+  set_property(TARGET cpythonextension PROPERTY INSTALL_RPATH "${module_origin_path}")
   set_property(TARGET cpythonextension PROPERTY PREFIX "")
 
   # install in python module
   install(TARGETS common EXPORT ArrowPythonNocopy LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include/python)
-  install(TARGETS pybind11extension EXPORT ArrowPythonNocopy LIBRARY DESTINATION . PUBLIC_HEADER DESTINATION include/python)
-  install(TARGETS cpythonextension EXPORT ArrowPythonNocopy LIBRARY DESTINATION . PUBLIC_HEADER DESTINATION include/python)
+  install(TARGETS pybind11extension EXPORT ArrowPythonNocopy LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include/python)
+  install(TARGETS cpythonextension EXPORT ArrowPythonNocopy LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include/python)
 endif()
