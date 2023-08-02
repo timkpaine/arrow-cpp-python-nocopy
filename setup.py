@@ -19,8 +19,8 @@ cmake_args.extend(
     ]
 )
 
-if os.path.exists(vcpkg_config_file) and os.name != "posix":
-    cmake_args.append(f"-DCMAKE_TOOLCHAIN_FILE={vcpkg_config_file}")
+# if os.path.exists(vcpkg_config_file) and os.name != "posix":
+#     cmake_args.append(f"-DCMAKE_TOOLCHAIN_FILE={vcpkg_config_file}")
 
 if "DEBUG" in os.environ:
     cmake_args.append("-DCMAKE_BUILD_TYPE=Debug")

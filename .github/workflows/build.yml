@@ -105,15 +105,14 @@ jobs:
 
       - name: Install dependencies
         run: make develop-macos
-        if: ${{ matrix.os == 'macos-12' }}
+        if: ${{ runner.os == 'macOS' }}
 
-      - name: Install dependencies
-        run: make develop-cpp
-        if: ${{ matrix.os == 'macos-12' }}
+      # - name: Install dependencies
+      #   run: make develop-cpp
     
       - name: Install dependencies
         run: make develop-arrow-ubuntu
-        if: ${{ matrix.os == 'ubuntu-22.04' }}
+        if: ${{ runner.os == 'Linux' }}
 
       - name: Install dependencies
         run: make develop-py
@@ -224,8 +223,19 @@ jobs:
           version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: make develop
+        run: make develop-macos
+        if: ${{ runner.os == 'macOS' }}
 
+      # - name: Install dependencies
+      #   run: make develop-cpp
+    
+      - name: Install dependencies
+        run: make develop-arrow-ubuntu
+        if: ${{ runner.os == 'Linux' }}
+
+      - name: Install dependencies
+        run: make develop-py
+  
       - name: Run cibuildwheel
         uses: actions-ext/python/run-cibuildwheel@v1
         with:
@@ -271,8 +281,19 @@ jobs:
           version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: make develop
+        run: make develop-macos
+        if: ${{ runner.os == 'macOS' }}
 
+      # - name: Install dependencies
+      #   run: make develop-cpp
+    
+      - name: Install dependencies
+        run: make develop-arrow-ubuntu
+        if: ${{ runner.os == 'Linux' }}
+
+      - name: Install dependencies
+        run: make develop-py
+  
       - name: Build sdist
         run: make dist-sdist
 
@@ -367,8 +388,19 @@ jobs:
           version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: make develop
+        run: make develop-macos
+        if: ${{ runner.os == 'macOS' }}
 
+      # - name: Install dependencies
+      #   run: make develop-cpp
+    
+      - name: Install dependencies
+        run: make develop-arrow-ubuntu
+        if: ${{ runner.os == 'Linux' }}
+
+      - name: Install dependencies
+        run: make develop-py
+  
       - name: Download wheels
         uses: actions-ext/python/download-dist@v1
         with:
@@ -433,8 +465,19 @@ jobs:
           version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: make develop
+        run: make develop-macos
+        if: ${{ runner.os == 'macOS' }}
 
+      # - name: Install dependencies
+      #   run: make develop-cpp
+    
+      - name: Install dependencies
+        run: make develop-arrow-ubuntu
+        if: ${{ runner.os == 'Linux' }}
+
+      - name: Install dependencies
+        run: make develop-py
+  
       - name: Download wheels
         uses: actions-ext/python/download-dist@v1
         with:

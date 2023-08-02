@@ -26,7 +26,7 @@ develop-arrow-ubuntu:
 	sudo apt install -y -V libarrow-glib-dev # For GLib (C)
 
 develop-macos:
-	brew install bison
+	brew install bison apache-arrow thrift
 
 develop: develop-cpp develop-py  ## Setup project for development
 
