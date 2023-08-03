@@ -1,5 +1,4 @@
 #include <apn-python/cpython.hpp>
-#include <iostream>
 
 static PyObject* _raise_error(PyObject* module) {
   PyErr_SetString(PyExc_TypeError, "Bad value provided");
@@ -8,7 +7,6 @@ static PyObject* _raise_error(PyObject* module) {
 
 PyObject* array_info_py_raw(PyObject* self, PyObject* args) {
   PyObject* source;
-  arrow::py::import_pyarrow();
 
   if(!PyArg_ParseTuple(args, "O", &source))
     return _raise_error(self);
@@ -21,8 +19,8 @@ PyObject* array_info_py_raw(PyObject* self, PyObject* args) {
   if(!result.ok())
     return _raise_error(self);
 
-  std::string ret_str = array_info_py(std::static_pointer_cast<arrow::Array>(result.ValueOrDie()));
-  return PyUnicode_FromStringAndSize(ret_str.c_str(), ret_str.length());
+  char* ret_str = array_info_py(std::static_pointer_cast<arrow::Array>(result.ValueOrDie()));
+  return PyUnicode_FromStringAndSize(ret_str, strlen(ret_str));
 }
 
 PyObject* create_array_py_raw(PyObject* self, PyObject* args) {
@@ -31,7 +29,6 @@ PyObject* create_array_py_raw(PyObject* self, PyObject* args) {
 
 PyObject* schema_info_py_raw(PyObject* self, PyObject* args) {
   PyObject* source;
-  arrow::py::import_pyarrow();
 
   // parse arguments
   if(!PyArg_ParseTuple(args, "O", &source))
@@ -45,8 +42,8 @@ PyObject* schema_info_py_raw(PyObject* self, PyObject* args) {
   if(!result.ok())
     return _raise_error(self);
 
-  std::string ret_str = schema_info_py(std::static_pointer_cast<arrow::Schema>(result.ValueOrDie()));
-  return PyUnicode_FromStringAndSize(ret_str.c_str(), ret_str.length());
+  char* ret_str = schema_info_py(std::static_pointer_cast<arrow::Schema>(result.ValueOrDie()));
+  return PyUnicode_FromStringAndSize(ret_str, strlen(ret_str));
 }
 
 PyObject* create_schema_py_raw(PyObject* self, PyObject* Py_UNUSED(args)) {

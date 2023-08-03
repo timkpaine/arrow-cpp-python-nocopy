@@ -91,6 +91,7 @@ test-requires = [
 [tool.cibuildwheel.linux]
 archs = "x86_64 aarch64"
 skip = "*musllinux* *i686"
+before-all = "make develop-arrow-ubuntu && make develop-py"
 
 [tool.cibuildwheel.macos]
 archs = "x86_64 arm64"

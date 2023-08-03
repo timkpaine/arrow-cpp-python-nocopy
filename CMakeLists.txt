@@ -45,10 +45,10 @@ endif()
 # Paths #
 #########
 # Custom CMake modules
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_SOURCE_DIR}/cmake/modules")
+list(PREPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 
 # Base includes
-include_directories ("${CMAKE_SOURCE_DIR}/src")
+include_directories ("${PROJECT_SOURCE_DIR}/src")
 
 ###############################################################################################################
 # Build Configuration #
@@ -56,7 +56,7 @@ include_directories ("${CMAKE_SOURCE_DIR}/src")
 find_package (Color)
 
 if (NOT DEFINED CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Debugma" CACHE STRING "Release/Debug build")
+  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Release/Debug build")
 endif()
 if (NOT DEFINED PYTHON_VERSION)
   set(PYTHON_VERSION "3.9" CACHE STRING "Python version to build against")
@@ -65,6 +65,7 @@ option(BUILD_PYTHON "Build Python bindings" ON)
 option(USE_CCACHE "Use CCache for build" OFF)
 option(STATIC_PYTHON "Build against static python (no libraries)" OFF)
 option(PYODIDE "Build against pyodide" OFF)
+set(BUILD_SHARED_LIBS ON)
 
 # CCache setup
 if(USE_CCACHE)
@@ -105,24 +106,6 @@ if(WIN32)
 endif()
 
 ###############################################################################################################
-# Version #
-###########
-# Set version from cmake and extract latest hash if available
-set(ARROW_PYTHON_NOCOPY_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
-set(ARROW_PYTHON_NOCOPY_VERSION_MINOR ${PROJECT_VERSION_MINOR})
-set(ARROW_PYTHON_NOCOPY_VERSION_PATCH ${PROJECT_VERSION_PATCH})
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
-  # Get latest commit
-  execute_process(COMMAND git rev-parse HEAD
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    OUTPUT_VARIABLE ARROW_PYTHON_NOCOPY_VERSION_COMMIT_SHA)
-  # strip newline
-  string(REGEX REPLACE "\n$" "" ARROW_PYTHON_NOCOPY_VERSION_COMMIT_SHA "${ARROW_PYTHON_NOCOPY_VERSION_COMMIT_SHA}")
-else()
-  set(ARROW_PYTHON_NOCOPY_VERSION_COMMIT_SHA "release")
-endif()
-
-###############################################################################################################
 # RPath #
 #########
 if(NOT WIN32)
@@ -148,6 +131,9 @@ endif()
 ###############################################################################################################
 # Flags #
 #########
+set(CMAKE_POSITION_INDEPENDENT_CODE On)
+add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
+
 # Compiler version flags
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a")
@@ -185,7 +171,12 @@ endif()
 ###############################################################################################################
 # Dependencies #
 ################
+message("${Red}${CMAKE_MODULE_PATH}${ColorReset}")
+
+
+# broken on mac
 find_package(Arrow REQUIRED)
+include_directories(${Arrow_INCLUDE_DIR})
 
 ###############################################################################################################
 # Python #
@@ -244,7 +235,7 @@ set(
 )
 
 add_library(arrow-python-nocopy SHARED ${PROJECT_SRCS})
-target_link_libraries(arrow-python-nocopy Arrow::arrow_static)
+target_link_libraries(arrow-python-nocopy PRIVATE ${Arrow_LIBRARY})
 set_target_properties(arrow-python-nocopy PROPERTIES PUBLIC_HEADER "${PROJECT_HDRS}")
 
 # export symbols
@@ -261,14 +252,46 @@ install(TARGETS arrow-python-nocopy EXPORT ArrowPythonNocopy LIBRARY DESTINATION
 if(BUILD_PYTHON)
   # Find Numpy
   find_package(NumPy REQUIRED)
+  include_directories(${NumPy_INCLUDE_DIR})
 
+  # Find PyArrow. We will link against it for the build only
+  # find_package(Pyarrow REQUIRED)
+  # include_directories(${PYARROW_INCLUDE_DIR})
+   
   # Find PyBind11
-  find_package(pybind11 REQUIRED)
-  include_directories(${pybind11_INCLUDE_DIR})
-  include_directories("${PROJECT_SOURCE_DIR}/src/vendored/apache-arrow-12.0.1")
-
+   find_package(pybind11 REQUIRED)
+   include_directories(${pybind11_INCLUDE_DIR})
+   set(VENDORED_PYARROW_ROOT "${PROJECT_SOURCE_DIR}/src/vendored/apache-arrow-12.0.1")
+   include_directories(${VENDORED_PYARROW_ROOT})
+   set(VENDORED_PYARROW_SRCS
+     # ${VENDORED_PYARROW_ROOT}/arrow/python/arrow_to_pandas.cc
+     # ${VENDORED_PYARROW_ROOT}/arrow/python/benchmark.cc
+     ${VENDORED_PYARROW_ROOT}/arrow/python/common.cc
+     # ${VENDORED_PYARROW_ROOT}/arrow/python/csv.cc
+     ${VENDORED_PYARROW_ROOT}/arrow/python/datetime.cc
+     ${VENDORED_PYARROW_ROOT}/arrow/python/decimal.cc
+     ${VENDORED_PYARROW_ROOT}/arrow/python/deserialize.cc
+     ${VENDORED_PYARROW_ROOT}/arrow/python/extension_type.cc
+     # ${VENDORED_PYARROW_ROOT}/arrow/python/filesystem.cc
+     # ${VENDORED_PYARROW_ROOT}/arrow/python/flight.cc
+     # ${VENDORED_PYARROW_ROOT}/arrow/python/gdb.cc
+     ${VENDORED_PYARROW_ROOT}/arrow/python/helpers.cc
+     ${VENDORED_PYARROW_ROOT}/arrow/python/inference.cc
+     ${VENDORED_PYARROW_ROOT}/arrow/python/init.cc
+     ${VENDORED_PYARROW_ROOT}/arrow/python/io.cc
+     ${VENDORED_PYARROW_ROOT}/arrow/python/ipc.cc
+     ${VENDORED_PYARROW_ROOT}/arrow/python/numpy_convert.cc
+     ${VENDORED_PYARROW_ROOT}/arrow/python/numpy_to_arrow.cc
+     # ${VENDORED_PYARROW_ROOT}/arrow/python/parquet_encryption.cc
+     ${VENDORED_PYARROW_ROOT}/arrow/python/pyarrow.cc
+     # ${VENDORED_PYARROW_ROOT}/arrow/python/python_test.cc
+     ${VENDORED_PYARROW_ROOT}/arrow/python/python_to_arrow.cc
+     ${VENDORED_PYARROW_ROOT}/arrow/python/serialize.cc
+     # ${VENDORED_PYARROW_ROOT}/arrow/python/udf.cc
+  )
+  
   # common functionality
-  add_library(common SHARED "${PROJECT_SOURCE_DIR}/src/apn-python/common.cpp")
+  add_library(common SHARED "${PROJECT_SOURCE_DIR}/src/apn-python/common.cpp" ${VENDORED_PYARROW_SRCS})
   set_target_properties(common PROPERTIES PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/src/apn-python/common.hpp")
 
   # pybind11 extension
@@ -280,16 +303,16 @@ if(BUILD_PYTHON)
   set_target_properties(cpythonextension PROPERTIES PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/src/apn-python/cpython.hpp")
 
   # Link to standalone/common library
-  target_link_libraries(common PUBLIC arrow-python-nocopy)
-  target_link_libraries(pybind11extension PUBLIC common)
-  target_link_libraries(cpythonextension PUBLIC common)
-  set_property(TARGET common PROPERTY INSTALL_RPATH "${module_origin_path}/lib")
-  set_property(TARGET pybind11extension PROPERTY INSTALL_RPATH "${module_origin_path}/lib")
-  set_property(TARGET cpythonextension PROPERTY INSTALL_RPATH "${module_origin_path}/lib")
+  target_link_libraries(common PRIVATE arrow-python-nocopy)
+  target_link_libraries(pybind11extension PRIVATE common)
+  target_link_libraries(cpythonextension PRIVATE common)
+  set_property(TARGET common PROPERTY INSTALL_RPATH "${module_origin_path}")
+  set_property(TARGET pybind11extension PROPERTY INSTALL_RPATH "${module_origin_path}")
+  set_property(TARGET cpythonextension PROPERTY INSTALL_RPATH "${module_origin_path}")
   set_property(TARGET cpythonextension PROPERTY PREFIX "")
 
   # install in python module
   install(TARGETS common EXPORT ArrowPythonNocopy LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include/python)
-  install(TARGETS pybind11extension EXPORT ArrowPythonNocopy LIBRARY DESTINATION . PUBLIC_HEADER DESTINATION include/python)
-  install(TARGETS cpythonextension EXPORT ArrowPythonNocopy LIBRARY DESTINATION . PUBLIC_HEADER DESTINATION include/python)
+  install(TARGETS pybind11extension EXPORT ArrowPythonNocopy LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include/python)
+  install(TARGETS cpythonextension EXPORT ArrowPythonNocopy LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include/python)
 endif()

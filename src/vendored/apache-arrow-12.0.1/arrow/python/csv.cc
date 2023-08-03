@@ -15,27 +15,47 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#pragma once
+#include "csv.h"
 
-#include <functional>
 #include <memory>
-#include <string>
-#include <vector>
 
-#include "arrow/csv/options.h"
 #include "arrow/python/common.h"
-#include "arrow/util/macros.h"
 
 namespace arrow {
+
+using csv::InvalidRow;
+using csv::InvalidRowHandler;
+using csv::InvalidRowResult;
+
 namespace py {
 namespace csv {
 
-using PyInvalidRowCallback = std::function<::arrow::csv::InvalidRowResult(
-    PyObject*, const ::arrow::csv::InvalidRow&)>;
+InvalidRowHandler MakeInvalidRowHandler(PyInvalidRowCallback cb, PyObject* py_handler) {
+  if (cb == nullptr) {
+    return InvalidRowHandler{};
+  }
 
-ARROW_PYTHON_EXPORT
-::arrow::csv::InvalidRowHandler MakeInvalidRowHandler(PyInvalidRowCallback,
-                                                      PyObject* handler);
+  struct Handler {
+    PyInvalidRowCallback cb;
+    std::shared_ptr<OwnedRefNoGIL> handler_ref;
+
+    InvalidRowResult operator()(const InvalidRow& invalid_row) {
+      InvalidRowResult result;
+      auto st = SafeCallIntoPython([&]() -> Status {
+        result = cb(handler_ref->obj(), invalid_row);
+        if (PyErr_Occurred()) {
+          PyErr_WriteUnraisable(handler_ref->obj());
+        }
+        return Status::OK();
+      });
+      ARROW_UNUSED(st);
+      return result;
+    }
+  };
+
+  Py_INCREF(py_handler);
+  return Handler{cb, std::make_shared<OwnedRefNoGIL>(py_handler)};
+}
 
 }  // namespace csv
 }  // namespace py
