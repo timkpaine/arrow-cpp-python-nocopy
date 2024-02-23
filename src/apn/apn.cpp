@@ -1,5 +1,5 @@
 #include <arrow/builder.h>
-#include "apn/apn.hpp"
+#include "apn/apn.h"
 
 std::shared_ptr<arrow::Array> create_array(char variant) {
   if(variant == 'b') {

@@ -14,7 +14,7 @@ from arrow_python_nocopy import _df, _table
 class TestPybind:
     def test_create_array_in_python(self):
         table = _table()
-        array = table.columns[0].chunk(0)
+        array = table['a'].combine_chunks()
         assert array_info(array) == '[\n  1,\n  2,\n  3\n]'
 
     def test_create_schema_in_python(self):
@@ -22,18 +22,18 @@ class TestPybind:
         assert schema_info(schema) == 'a: int32\nb: float\nc: string'
 
     def test_create_array_in_cpp(self):
-        array = create_array()
+        array = pa.Array._import_from_c_capsule(*create_array())
         assert str(array) == '[\n  1,\n  2,\n  3\n]'
 
     def test_create_schema_in_cpp(self):
-        schema = create_schema()
+        schema = pa.Schema._import_from_c_capsule(create_schema())
         assert str(schema) == 'a: int32\nb: float\nc: binary'
 
 
 class TestCPython:
     def test_create_array_in_python(self):
         table = _table()
-        array = table.columns[0].chunk(0)
+        array = table['a'].combine_chunks()
         assert array_info_cp(array) == '[\n  1,\n  2,\n  3\n]'
 
     def test_create_array_in_python_bad_value(self):
@@ -49,9 +49,9 @@ class TestCPython:
             schema_info_cp("blerg")
 
     def test_create_array_in_cpp(self):
-        array = create_array_cp()
+        array = pa.Array._import_from_c_capsule(*create_array_cp())
         assert str(array) == '[\n  1,\n  2,\n  3\n]'
 
     def test_create_schema_in_cpp(self):
-        schema = create_schema_cp()
+        schema = pa.Schema._import_from_c_capsule(create_schema_cp())
         assert str(schema) == 'a: int32\nb: float\nc: binary'

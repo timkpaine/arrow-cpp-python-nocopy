@@ -224,7 +224,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 #########################
 set(
     PROJECT_HDRS
-    "${PROJECT_SOURCE_DIR}/src/apn/apn.hpp"
+    "${PROJECT_SOURCE_DIR}/src/apn/apn.h"
     "${PROJECT_SOURCE_DIR}/src/apn/bridge.h"
     "${PROJECT_SOURCE_DIR}/src/apn-common/exports.h"
 )
@@ -263,22 +263,27 @@ if(BUILD_PYTHON)
    include_directories(${pybind11_INCLUDE_DIR})
 
   # common functionality
+  add_library(common SHARED "${PROJECT_SOURCE_DIR}/src/apn-python/common.cpp" ${VENDORED_PYARROW_SRCS})
+
   # pybind11 extension
   pybind11_add_module(pybind11extension MODULE "${PROJECT_SOURCE_DIR}/src/apn-python/pybind11.cpp")
-  set_target_properties(pybind11extension PROPERTIES PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/src/apn-python/pybind11.hpp")
+  set_target_properties(pybind11extension PROPERTIES PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/src/apn-python/pybind11.h")
 
   # cpython extension
   add_library(cpythonextension SHARED "${PROJECT_SOURCE_DIR}/src/apn-python/cpython.cpp")
-  set_target_properties(cpythonextension PROPERTIES PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/src/apn-python/cpython.hpp")
+  set_target_properties(cpythonextension PROPERTIES PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/src/apn-python/cpython.h")
 
   # Link to standalone/common library
-  target_link_libraries(pybind11extension PRIVATE arrow-python-nocopy)
-  target_link_libraries(cpythonextension PRIVATE arrow-python-nocopy)
+  target_link_libraries(common PRIVATE arrow-python-nocopy)
+  target_link_libraries(pybind11extension PRIVATE common)
+  target_link_libraries(cpythonextension PRIVATE common)
+  set_property(TARGET common PROPERTY INSTALL_RPATH "${module_origin_path}")
   set_property(TARGET pybind11extension PROPERTY INSTALL_RPATH "${module_origin_path}")
   set_property(TARGET cpythonextension PROPERTY INSTALL_RPATH "${module_origin_path}")
   set_property(TARGET cpythonextension PROPERTY PREFIX "")
 
   # install in python module
+  install(TARGETS common EXPORT ArrowPythonNocopy LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include/python)
   install(TARGETS pybind11extension EXPORT ArrowPythonNocopy LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include/python)
   install(TARGETS cpythonextension EXPORT ArrowPythonNocopy LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include/python)
 endif()
