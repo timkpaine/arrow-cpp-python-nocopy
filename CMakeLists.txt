@@ -121,7 +121,7 @@ if(NOT WIN32)
     if(MACOS)
         set(module_origin_path "@loader_path")
     else()
-        set(module_origin_path "\$ORIGIN")
+      set(module_origin_path "\$ORIGIN")
     endif()
 else()
     set(CMAKE_SHARED_LIBRARY_PREFIX "lib")
@@ -132,7 +132,7 @@ endif()
 # Flags #
 #########
 set(CMAKE_POSITION_INDEPENDENT_CODE On)
-add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
+# add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
 
 # Compiler version flags
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -203,7 +203,7 @@ endif()
 ###############################################################################################################
 # Messages #
 ############
-message("Building CPP Template version v${ARROW_PYTHON_NOCOPY_VERSION_MAJOR}.${ARROW_PYTHON_NOCOPY_VERSION_MINOR}.${ARROW_PYTHON_NOCOPY_VERSION_PATCH} [${ARROW_PYTHON_NOCOPY_VERSION_COMMIT_SHA}]")
+message("Building Arrow-Python-Nocopy version v${ARROW_PYTHON_NOCOPY_VERSION_MAJOR}.${ARROW_PYTHON_NOCOPY_VERSION_MINOR}.${ARROW_PYTHON_NOCOPY_VERSION_PATCH} [${ARROW_PYTHON_NOCOPY_VERSION_COMMIT_SHA}]")
 string(TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_LOWER)
 
 if(CMAKE_BUILD_TYPE_LOWER STREQUAL debug)
@@ -235,7 +235,7 @@ set(
 )
 
 add_library(arrow-python-nocopy SHARED ${PROJECT_SRCS})
-target_link_libraries(arrow-python-nocopy PRIVATE ${Arrow_LIBRARY})
+target_link_libraries(arrow-python-nocopy PRIVATE Arrow::arrow_static)
 set_target_properties(arrow-python-nocopy PROPERTIES PUBLIC_HEADER "${PROJECT_HDRS}")
 
 # export symbols

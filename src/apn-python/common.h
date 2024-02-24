@@ -4,6 +4,7 @@
 #include "Python.h"
 #include <arrow/table.h>
 #include <apn-common/exports.h>
+#include<arrow/util/key_value_metadata.h>
 
 LIB_EXPORT std::shared_ptr<arrow::Array> unpack_array(PyObject*);
 LIB_EXPORT std::shared_ptr<arrow::DataType> unpack_dtype(PyObject*);
