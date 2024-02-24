@@ -4,27 +4,11 @@ import pyarrow as pa
 import pandas as pd
 from .lib.pybind11extension import array_info, create_array
 from .lib.pybind11extension import schema_info, create_schema
-
-# from .lib.pybind11extension import table_info, create_table
 from .lib.cpythonextension import array_info as array_info_cp, create_array as create_array_cp
 from .lib.cpythonextension import schema_info as schema_info_cp, create_schema as create_schema_cp
 
-# from .lib.cpythonextension import table_info as table_info_cp, create_table as create_table_cp
-
 
 __version__ = "0.1.0"
-
-
-def include_path():
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), "include"))
-
-
-def bin_path():
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), "bin"))
-
-
-def lib_path():
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), "lib"))
 
 
 def _df():
@@ -37,23 +21,22 @@ def _table():
 
 def create_arrow_array_in_python():
     table = _table()
-    array = table.columns['a']
-    print(array_info(array))
+    array = table['a'].combine_chunks()
+    return array_info(array)
 
 
 def create_arrow_array_in_cpp():
-    return create_array()
+    return pa.Array._import_from_c_capsule(*create_array())
 
 
 def create_arrow_schema_in_python():
     table = _table()
     schema = table.schema
-    print(schema_info(schema))
+    return schema_info(schema)
 
 
 def create_arrow_schema_in_cpp():
-    return create_schema()
-
+    return pa.Schema._import_from_c_capsule(create_schema())
 
 # def create_arrow_table_in_python():
 #     table = _table()

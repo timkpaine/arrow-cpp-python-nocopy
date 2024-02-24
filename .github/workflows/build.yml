@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - tkp/linux 
+      - tkp/linux
     tags:
       - v*
     paths-ignore:
@@ -52,11 +52,11 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           # for pull_request so we can do HEAD^2
           fetch-depth: 2
-  
+
       - name: Initialize variables
         uses: actions-ext/general/initialize-variables@v1
         id: initialize
@@ -91,7 +91,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -109,7 +109,7 @@ jobs:
 
       # - name: Install dependencies
       #   run: make develop-cpp
-    
+
       - name: Install dependencies
         run: make develop-arrow-ubuntu
         if: ${{ runner.os == 'Linux' }}
@@ -167,7 +167,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Run cibuildwheel
         uses: actions-ext/python/run-cibuildwheel@v1
@@ -215,7 +215,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions-ext/python/setup@v1
@@ -228,14 +228,14 @@ jobs:
 
       # - name: Install dependencies
       #   run: make develop-cpp
-    
+
       - name: Install dependencies
         run: make develop-arrow-ubuntu
         if: ${{ runner.os == 'Linux' }}
 
       - name: Install dependencies
         run: make develop-py
-  
+
       - name: Run cibuildwheel
         uses: actions-ext/python/run-cibuildwheel@v1
         with:
@@ -270,10 +270,10 @@ jobs:
           - '3.9'
     runs-on: ${{ matrix.os }}
     if: ${{ needs.initialize.outputs.FULL_BUILD == 'true' }}
- 
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions-ext/python/setup@v1
@@ -286,14 +286,14 @@ jobs:
 
       # - name: Install dependencies
       #   run: make develop-cpp
-    
+
       - name: Install dependencies
         run: make develop-arrow-ubuntu
         if: ${{ runner.os == 'Linux' }}
 
       - name: Install dependencies
         run: make develop-py
-  
+
       - name: Build sdist
         run: make dist-sdist
 
@@ -328,7 +328,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions-ext/python/setup@v1
@@ -380,7 +380,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions-ext/python/setup@v1
@@ -393,14 +393,14 @@ jobs:
 
       # - name: Install dependencies
       #   run: make develop-cpp
-    
+
       - name: Install dependencies
         run: make develop-arrow-ubuntu
         if: ${{ runner.os == 'Linux' }}
 
       - name: Install dependencies
         run: make develop-py
-  
+
       - name: Download wheels
         uses: actions-ext/python/download-dist@v1
         with:
@@ -409,7 +409,7 @@ jobs:
 
       - name: Test project
         run: make tests-ci
-  
+
       - name: Upload test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
@@ -457,7 +457,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions-ext/python/setup@v1
@@ -470,14 +470,14 @@ jobs:
 
       # - name: Install dependencies
       #   run: make develop-cpp
-    
+
       - name: Install dependencies
         run: make develop-arrow-ubuntu
         if: ${{ runner.os == 'Linux' }}
 
       - name: Install dependencies
         run: make develop-py
-  
+
       - name: Download wheels
         uses: actions-ext/python/download-dist@v1
         with:
@@ -485,7 +485,7 @@ jobs:
 
       - name: Test project
         run: make tests-ci
-  
+
       - name: Upload test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:

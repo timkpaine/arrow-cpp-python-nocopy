@@ -52,7 +52,7 @@ lint-py:
 	python -m ruff arrow_python_nocopy
 
 lint-cpp:
-	clang-format --dry-run -Werror -i -style=file `find ./src -name "*.*pp"` || echo "sometimes flaky"
+	clang-format --dry-run -Werror -i -style=file `find ./src -name "*.{h,cpp}"` || echo "sometimes flaky"
 
 lint: lint-cpp lint-py  ## Run project linters
 
@@ -61,7 +61,7 @@ fix-py:
 	python -m ruff arrow_python_nocopy --fix
 
 fix-cpp:
-	clang-format -i -style=file `find ./src -name "*.*pp"`
+	clang-format -i -style=file `find ./src -name "*.{h,cpp}"`
 
 fix: fix-cpp fix-py  ## Run project autofixers
 
@@ -86,7 +86,7 @@ dist-wheel:  ## Create python wheel dist
 	python setup.py bdist_wheel $(OTHER_ARGS)
 
 dist-cibw:  ## Create python wheel dist with cibuildwheel
-	python -m cibuildwheel --output-dir dist 
+	python -m cibuildwheel --output-dir dist
 
 dist: build dist-sdist dist-wheel  ## Create python dists
 	python -m twine check target/wheels/*

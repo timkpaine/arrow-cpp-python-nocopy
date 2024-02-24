@@ -1,6 +1,6 @@
 #include <arrow/c/bridge.h>
 #include <apn/bridge.h>
-#include <apn/apn.hpp>
+#include <apn/apn.h>
 
 int array_info_cabi(struct ArrowArray* c_array, char* buffer, size_t size) {
   std::shared_ptr<arrow::Array> arrow_array = arrow::ImportArray(c_array, arrow::int32()).ValueOrDie();

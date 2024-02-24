@@ -121,7 +121,7 @@ if(NOT WIN32)
     if(MACOS)
         set(module_origin_path "@loader_path")
     else()
-        set(module_origin_path "\$ORIGIN")
+      set(module_origin_path "\$ORIGIN")
     endif()
 else()
     set(CMAKE_SHARED_LIBRARY_PREFIX "lib")
@@ -132,7 +132,7 @@ endif()
 # Flags #
 #########
 set(CMAKE_POSITION_INDEPENDENT_CODE On)
-add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
+# add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
 
 # Compiler version flags
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -175,7 +175,7 @@ message("${Red}${CMAKE_MODULE_PATH}${ColorReset}")
 
 
 # broken on mac
-find_package(Arrow REQUIRED)
+find_package(Arrow CONFIG REQUIRED)
 include_directories(${Arrow_INCLUDE_DIR})
 
 ###############################################################################################################
@@ -203,7 +203,7 @@ endif()
 ###############################################################################################################
 # Messages #
 ############
-message("Building CPP Template version v${ARROW_PYTHON_NOCOPY_VERSION_MAJOR}.${ARROW_PYTHON_NOCOPY_VERSION_MINOR}.${ARROW_PYTHON_NOCOPY_VERSION_PATCH} [${ARROW_PYTHON_NOCOPY_VERSION_COMMIT_SHA}]")
+message("Building Arrow-Python-Nocopy version v${ARROW_PYTHON_NOCOPY_VERSION_MAJOR}.${ARROW_PYTHON_NOCOPY_VERSION_MINOR}.${ARROW_PYTHON_NOCOPY_VERSION_PATCH} [${ARROW_PYTHON_NOCOPY_VERSION_COMMIT_SHA}]")
 string(TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_LOWER)
 
 if(CMAKE_BUILD_TYPE_LOWER STREQUAL debug)
@@ -224,7 +224,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 #########################
 set(
     PROJECT_HDRS
-    "${PROJECT_SOURCE_DIR}/src/apn/apn.hpp"
+    "${PROJECT_SOURCE_DIR}/src/apn/apn.h"
     "${PROJECT_SOURCE_DIR}/src/apn/bridge.h"
     "${PROJECT_SOURCE_DIR}/src/apn-common/exports.h"
 )
@@ -235,7 +235,7 @@ set(
 )
 
 add_library(arrow-python-nocopy SHARED ${PROJECT_SRCS})
-target_link_libraries(arrow-python-nocopy PRIVATE ${Arrow_LIBRARY})
+target_link_libraries(arrow-python-nocopy PRIVATE Arrow::arrow_static)
 set_target_properties(arrow-python-nocopy PROPERTIES PUBLIC_HEADER "${PROJECT_HDRS}")
 
 # export symbols
@@ -257,50 +257,21 @@ if(BUILD_PYTHON)
   # Find PyArrow. We will link against it for the build only
   # find_package(Pyarrow REQUIRED)
   # include_directories(${PYARROW_INCLUDE_DIR})
-   
+
   # Find PyBind11
-   find_package(pybind11 REQUIRED)
+   find_package(pybind11 CONFIG REQUIRED)
    include_directories(${pybind11_INCLUDE_DIR})
-   set(VENDORED_PYARROW_ROOT "${PROJECT_SOURCE_DIR}/src/vendored/apache-arrow-12.0.1")
-   include_directories(${VENDORED_PYARROW_ROOT})
-   set(VENDORED_PYARROW_SRCS
-     # ${VENDORED_PYARROW_ROOT}/arrow/python/arrow_to_pandas.cc
-     # ${VENDORED_PYARROW_ROOT}/arrow/python/benchmark.cc
-     ${VENDORED_PYARROW_ROOT}/arrow/python/common.cc
-     # ${VENDORED_PYARROW_ROOT}/arrow/python/csv.cc
-     ${VENDORED_PYARROW_ROOT}/arrow/python/datetime.cc
-     ${VENDORED_PYARROW_ROOT}/arrow/python/decimal.cc
-     ${VENDORED_PYARROW_ROOT}/arrow/python/deserialize.cc
-     ${VENDORED_PYARROW_ROOT}/arrow/python/extension_type.cc
-     # ${VENDORED_PYARROW_ROOT}/arrow/python/filesystem.cc
-     # ${VENDORED_PYARROW_ROOT}/arrow/python/flight.cc
-     # ${VENDORED_PYARROW_ROOT}/arrow/python/gdb.cc
-     ${VENDORED_PYARROW_ROOT}/arrow/python/helpers.cc
-     ${VENDORED_PYARROW_ROOT}/arrow/python/inference.cc
-     ${VENDORED_PYARROW_ROOT}/arrow/python/init.cc
-     ${VENDORED_PYARROW_ROOT}/arrow/python/io.cc
-     ${VENDORED_PYARROW_ROOT}/arrow/python/ipc.cc
-     ${VENDORED_PYARROW_ROOT}/arrow/python/numpy_convert.cc
-     ${VENDORED_PYARROW_ROOT}/arrow/python/numpy_to_arrow.cc
-     # ${VENDORED_PYARROW_ROOT}/arrow/python/parquet_encryption.cc
-     ${VENDORED_PYARROW_ROOT}/arrow/python/pyarrow.cc
-     # ${VENDORED_PYARROW_ROOT}/arrow/python/python_test.cc
-     ${VENDORED_PYARROW_ROOT}/arrow/python/python_to_arrow.cc
-     ${VENDORED_PYARROW_ROOT}/arrow/python/serialize.cc
-     # ${VENDORED_PYARROW_ROOT}/arrow/python/udf.cc
-  )
-  
+
   # common functionality
   add_library(common SHARED "${PROJECT_SOURCE_DIR}/src/apn-python/common.cpp" ${VENDORED_PYARROW_SRCS})
-  set_target_properties(common PROPERTIES PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/src/apn-python/common.hpp")
 
   # pybind11 extension
   pybind11_add_module(pybind11extension MODULE "${PROJECT_SOURCE_DIR}/src/apn-python/pybind11.cpp")
-  set_target_properties(pybind11extension PROPERTIES PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/src/apn-python/pybind11.hpp")
+  set_target_properties(pybind11extension PROPERTIES PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/src/apn-python/pybind11.h")
 
   # cpython extension
   add_library(cpythonextension SHARED "${PROJECT_SOURCE_DIR}/src/apn-python/cpython.cpp")
-  set_target_properties(cpythonextension PROPERTIES PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/src/apn-python/cpython.hpp")
+  set_target_properties(cpythonextension PROPERTIES PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/src/apn-python/cpython.h")
 
   # Link to standalone/common library
   target_link_libraries(common PRIVATE arrow-python-nocopy)
