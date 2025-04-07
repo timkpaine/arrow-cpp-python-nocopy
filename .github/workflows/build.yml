@@ -96,7 +96,7 @@ jobs:
           submodules: true
 
       - name: Setup Python
-        uses: actions-ext/python/setup@v1
+        uses: actions-ext/python/setup@v2
         with:
           version: ${{ matrix.python-version }}
 
@@ -170,12 +170,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run cibuildwheel
-        uses: actions-ext/python/run-cibuildwheel@v1
+        uses: actions-ext/python/run-cibuildwheel@v2
         with:
           version: ${{ matrix.python-version }}
 
       - name: Upload wheels
-        uses: actions-ext/python/upload-dist@v1
+        uses: actions-ext/python/upload-dist@v2
         with:
           kind: 'wheel'
 
@@ -218,7 +218,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions-ext/python/setup@v1
+        uses: actions-ext/python/setup@v2
         with:
           version: ${{ matrix.python-version }}
 
@@ -237,12 +237,12 @@ jobs:
         run: make develop-py
 
       - name: Run cibuildwheel
-        uses: actions-ext/python/run-cibuildwheel@v1
+        uses: actions-ext/python/run-cibuildwheel@v2
         with:
           version: ${{ matrix.python-version }}
 
       - name: Upload wheels
-        uses: actions-ext/python/upload-dist@v1
+        uses: actions-ext/python/upload-dist@v2
         with:
           version: ${{ matrix.python-version }}
           kind: 'wheel'
@@ -276,7 +276,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions-ext/python/setup@v1
+        uses: actions-ext/python/setup@v2
         with:
           version: ${{ matrix.python-version }}
 
@@ -298,7 +298,7 @@ jobs:
         run: make dist-sdist
 
       - name: Upload sdist
-        uses: actions-ext/python/upload-dist@v1
+        uses: actions-ext/python/upload-dist@v2
         with:
           kind: "sdist"
 
@@ -331,7 +331,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions-ext/python/setup@v1
+        uses: actions-ext/python/setup@v2
         with:
           version: ${{ matrix.python-version }}
 
@@ -383,7 +383,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions-ext/python/setup@v1
+        uses: actions-ext/python/setup@v2
         with:
           version: ${{ matrix.python-version }}
 
@@ -402,7 +402,7 @@ jobs:
         run: make develop-py
 
       - name: Download wheels
-        uses: actions-ext/python/download-dist@v1
+        uses: actions-ext/python/download-dist@v2
         with:
           version: ${{ matrix.python-version }}
           kind: "wheel"
@@ -460,7 +460,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions-ext/python/setup@v1
+        uses: actions-ext/python/setup@v2
         with:
           version: ${{ matrix.python-version }}
 
@@ -479,7 +479,7 @@ jobs:
         run: make develop-py
 
       - name: Download wheels
-        uses: actions-ext/python/download-dist@v1
+        uses: actions-ext/python/download-dist@v2
         with:
           kind: "sdist"
 
