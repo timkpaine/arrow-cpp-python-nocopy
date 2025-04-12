@@ -49,7 +49,8 @@ debug: debug-py  ## Debug build the project
 
 .PHONY: lint-py lint-cpp lint
 lint-py:
-	python -m ruff arrow_python_nocopy
+	python -m ruff check arrow_python_nocopy
+	python -m ruff format --check arrow_python_nocopy
 
 lint-cpp:
 	clang-format --dry-run -Werror -i -style=file `find ./src -name "*.{h,cpp}"` || echo "sometimes flaky"
@@ -58,7 +59,8 @@ lint: lint-cpp lint-py  ## Run project linters
 
 .PHONY: fix-py fix-cpp fix
 fix-py:
-	python -m ruff arrow_python_nocopy --fix
+	python -m ruff check arrow_python_nocopy --fix
+	python -m ruff format arrow_python_nocopy
 
 fix-cpp:
 	clang-format -i -style=file `find ./src -name "*.{h,cpp}"`
