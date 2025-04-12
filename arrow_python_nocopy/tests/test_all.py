@@ -14,27 +14,27 @@ from arrow_python_nocopy import _df, _table
 class TestPybind:
     def test_create_array_in_python(self):
         table = _table()
-        array = table['a'].combine_chunks()
-        assert array_info(array) == '[\n  1,\n  2,\n  3\n]'
+        array = table["a"].combine_chunks()
+        assert array_info(array) == "[\n  1,\n  2,\n  3\n]"
 
     def test_create_schema_in_python(self):
         schema = pa.Schema.from_pandas(_df())
-        assert schema_info(schema) == 'a: int32\nb: float\nc: string'
+        assert schema_info(schema) == "a: int32\nb: float\nc: string"
 
     def test_create_array_in_cpp(self):
         array = pa.Array._import_from_c_capsule(*create_array())
-        assert str(array) == '[\n  1,\n  2,\n  3\n]'
+        assert str(array) == "[\n  1,\n  2,\n  3\n]"
 
     def test_create_schema_in_cpp(self):
         schema = pa.Schema._import_from_c_capsule(create_schema())
-        assert str(schema) == 'a: int32\nb: float\nc: binary'
+        assert str(schema) == "a: int32\nb: float\nc: binary"
 
 
 class TestCPython:
     def test_create_array_in_python(self):
         table = _table()
-        array = table['a'].combine_chunks()
-        assert array_info_cp(array) == '[\n  1,\n  2,\n  3\n]'
+        array = table["a"].combine_chunks()
+        assert array_info_cp(array) == "[\n  1,\n  2,\n  3\n]"
 
     def test_create_array_in_python_bad_value(self):
         with pytest.raises(TypeError):
@@ -42,7 +42,7 @@ class TestCPython:
 
     def test_create_schema_in_python(self):
         schema = pa.Schema.from_pandas(_df())
-        assert schema_info_cp(schema) == 'a: int32\nb: float\nc: string'
+        assert schema_info_cp(schema) == "a: int32\nb: float\nc: string"
 
     def test_create_schema_in_python_bad_value(self):
         with pytest.raises(TypeError):
@@ -50,8 +50,8 @@ class TestCPython:
 
     def test_create_array_in_cpp(self):
         array = pa.Array._import_from_c_capsule(*create_array_cp())
-        assert str(array) == '[\n  1,\n  2,\n  3\n]'
+        assert str(array) == "[\n  1,\n  2,\n  3\n]"
 
     def test_create_schema_in_cpp(self):
         schema = pa.Schema._import_from_c_capsule(create_schema_cp())
-        assert str(schema) == 'a: int32\nb: float\nc: binary'
+        assert str(schema) == "a: int32\nb: float\nc: binary"

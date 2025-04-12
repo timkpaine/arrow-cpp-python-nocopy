@@ -12,7 +12,7 @@ __version__ = "0.1.0"
 
 
 def _df():
-    return pd.DataFrame({"a": pd.Series([1, 2, 3], dtype='Int32'), "b": pd.Series([1.1, 2.2, 3.3], dtype='Float32'), "c": pd.Series(["abc", "def", "ghi"], dtype=str)})
+    return pd.DataFrame({"a": pd.Series([1, 2, 3], dtype="Int32"), "b": pd.Series([1.1, 2.2, 3.3], dtype="Float32"), "c": pd.Series(["abc", "def", "ghi"], dtype=str)})
 
 
 def _table():
@@ -21,7 +21,7 @@ def _table():
 
 def create_arrow_array_in_python():
     table = _table()
-    array = table['a'].combine_chunks()
+    array = table["a"].combine_chunks()
     return array_info(array)
 
 
@@ -37,6 +37,7 @@ def create_arrow_schema_in_python():
 
 def create_arrow_schema_in_cpp():
     return pa.Schema._import_from_c_capsule(create_schema())
+
 
 # def create_arrow_table_in_python():
 #     table = _table()
