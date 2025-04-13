@@ -82,7 +82,7 @@ jobs:
       matrix:
         os:
           - ubuntu-22.04
-          - macos-12
+          - macos-13
         python-version:
           - '3.9'
       fail-fast: false
