@@ -37,7 +37,7 @@ dependencies = [
 
 [project.optional-dependencies]
 develop = [
-    "black>=23",
+    "black>=26.5.1",
     "bump2version",
     "check-manifest",
     "cibuildwheel",
